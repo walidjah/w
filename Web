@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAT Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-status {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .form-status.success {
+            color: green;
+        }
+        .form-status.error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SWAT Application</h1>
+        <form id="applicationForm">
+            <div class="form-group">
+                <label for="robloxUsername">What is your Roblox username?</label>
+                <input type="text" id="robloxUsername" name="robloxUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="discordUsername">What is your Discord username?</label>
+                <input type="text" id="discordUsername" name="discordUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="reason">Why do you want to join SWAT?</label>
+                <textarea id="reason" name="reason" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="pastExperience">Any past experiences?</label>
+                <textarea id="pastExperience" name="pastExperience" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Are you above the age of 13?</label>
+                <input type="radio" id="ageYes" name="age" value="Yes" required> <label for="ageYes">Yes</label>
+                <input type="radio" id="ageNo" name="age" value="No" required> <label for="ageNo">No</label>
+            </div>
+            <button type="button" onclick="submitApplication()">Submit Application</button>
+        </form>
+        <div id="formStatus" class="form-status"></div>
+    </div>
+
+    <script>
+        async function submitApplication() {
+            const form = document.getElementById('applicationForm');
+            const statusDiv = document.getElementById('formStatus');
+
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Webhook URL
+                const webhookURL = 'https://discord.com/api/webhooks/1283073106742607913/gybabaNmX3zM_66LOnWs-LOfMWs4Ofd3rt7Y-kzRDn1Gt2JgbwqZQxodbovwxiw6S9md';
+
+                try {
+                    const response = await fetch(webhookURL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            content: `**SWAT Application Received**\n**Roblox Username:** ${data.robloxUsername}\n**Discord Username:** ${data.discordUsername}\n**Reason for Joining SWAT:** ${data.reason}\n**Past Experiences:** ${data.pastExperience}\n**Age Above 13:** ${data.age}`
+                        })
+                    });
+
+                    if (response.ok) {
+                        statusDiv.textContent = 'Your application has been submitted successfully!';
+                        statusDiv.className = 'form-status success';
+                        form.reset();
+                    } else {
+                        statusDiv.textContent = 'There was a problem submitting your application. Please try again.';
+                        statusDiv.className = 'form-status error';
+                    }
+                } catch (error) {
+                    statusDiv.textContent = 'There was an error with the submission. Please try again.';
+                    statusDiv.className = 'form-status error';
+                }
+
+                statusDiv.style.display = 'block';
+            } else {
+                statusDiv.textContent = 'Please fill out all required fields.';
+                statusDiv.className = 'form-status error';
+                statusDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
